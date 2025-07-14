@@ -17,7 +17,8 @@ Environment=CONFIGURATION_PATH=__INSTALL_DIR__
 
 ### Sandboxing options to harden security
 # Based on wireguard_ynh package systemd configuration
-NoNewPrivileges=yes
+# NoNewPrivileges disabled to allow sudo for WireGuard management
+#NoNewPrivileges=yes
 PrivateTmp=yes
 PrivateDevices=yes
 # Disabling the following restriction since WGDashboard needs network access
@@ -46,11 +47,12 @@ CapabilityBoundingSet=~CAP_LEASE CAP_LINUX_IMMUTABLE CAP_IPC_LOCK
 CapabilityBoundingSet=~CAP_BLOCK_SUSPEND CAP_WAKE_ALARM
 CapabilityBoundingSet=~CAP_SYS_TTY_CONFIG
 CapabilityBoundingSet=~CAP_MAC_ADMIN CAP_MAC_OVERRIDE
-CapabilityBoundingSet=~CAP_SYS_ADMIN CAP_SYS_PTRACE CAP_SYSLOG
+# Removed CAP_SYS_ADMIN restriction to allow sudo
+CapabilityBoundingSet=~CAP_SYS_PTRACE CAP_SYSLOG
 
-# Allow capabilities needed for WireGuard management
-CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
-AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
+# Allow capabilities needed for WireGuard management including sudo access
+CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN
+AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN
 
 # Exception to ProtectSystem - allow access to WireGuard configs
 ReadWritePaths=/etc/wireguard

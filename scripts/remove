@@ -70,14 +70,8 @@ if [ "$wireguard_other_packages" = false ]; then
         fi
     done
     
-    # YunoHost does not handle services not ending with .service, let's remove them manually
-    systemctl stop wireguard@wg0.path 2>/dev/null || true
-    systemctl disable wireguard@wg0.path --quiet 2>/dev/null || true
-    ynh_safe_rm "/etc/systemd/system/wireguard@.path"
-    
-    systemctl stop wireguard@wg0.service 2>/dev/null || true
-    systemctl disable wireguard@wg0.service --quiet 2>/dev/null || true
-    ynh_safe_rm "/etc/systemd/system/wireguard@.service"
+    # Remove any leftover WireGuard configs and data
+    ynh_safe_rm "/etc/wireguard/WGDashboard_Backup"
     
     # Disable the wg-quick service template
     systemctl disable wg-quick@.service --quiet 2>/dev/null || true

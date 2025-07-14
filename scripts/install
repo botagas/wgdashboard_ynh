@@ -72,9 +72,8 @@ else
     ynh_print_info "IP forwarding already configured by existing WireGuard installation"
 fi
 
-# Ensure WireGuard service is available but don't start specific configs
-# WGDashboard will manage individual configurations as needed
-systemctl enable wg-quick@.service --quiet || true
+# WGDashboard manages WireGuard configurations directly via wg-quick commands
+ynh_print_info "WGDashboard will manage WireGuard configurations directly"
 
 #=================================================
 # SYSTEM CONFIGURATION
