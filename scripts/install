@@ -53,6 +53,30 @@ mkdir -p /etc/wireguard/WGDashboard_Backup
 chown "$app":"$app" /etc/wireguard/WGDashboard_Backup
 
 #=================================================
+# WIREGUARD SETUP
+#=================================================
+ynh_script_progression "Configuring WireGuard..."
+
+# Check if another WireGuard YunoHost package is already installed
+wireguard_already_configured=false
+if yunohost app list --installed | grep -q "id: wireguard" 2>/dev/null; then
+    ynh_print_info "WireGuard is already installed via YunoHost package, skipping basic setup..."
+    wireguard_already_configured=true
+fi
+
+# Enable IP forwarding for WireGuard VPN functionality (if not already configured)
+if [ "$wireguard_already_configured" = false ] || [ ! -f "/etc/sysctl.d/wireguard.conf" ]; then
+    ynh_config_add --template="../conf/sysctl.conf" --destination="/etc/sysctl.d/$app.conf"
+    sysctl -p "/etc/sysctl.d/$app.conf"
+else
+    ynh_print_info "IP forwarding already configured by existing WireGuard installation"
+fi
+
+# Ensure WireGuard service is available but don't start specific configs
+# WGDashboard will manage individual configurations as needed
+systemctl enable wg-quick@.service --quiet || true
+
+#=================================================
 # SYSTEM CONFIGURATION
 #=================================================
 ynh_script_progression "Adding system configurations related to $app..."

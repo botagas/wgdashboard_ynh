@@ -38,6 +38,12 @@ ynh_backup "/etc/$app/"
 
 ynh_backup "/var/log/$app/"
 
+# Backup WGDashboard's backup directory (contains WireGuard config backups)
+ynh_backup "/etc/wireguard/WGDashboard_Backup/"
+
+# Backup WireGuard system configuration
+ynh_backup "/etc/sysctl.d/$app.conf"
+
 #=================================================
 # END OF SCRIPT
 #=================================================

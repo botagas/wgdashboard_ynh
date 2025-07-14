@@ -27,6 +27,31 @@ ynh_safe_rm "/etc/cron.d/$app"
 ynh_safe_rm "/etc/$app"
 
 #=================================================
+# CLEAN UP WIREGUARD RELATED FILES
+#=================================================
+ynh_script_progression "Cleaning up WireGuard related files..."
+
+# Remove WGDashboard backup directory
+ynh_safe_rm "/etc/wireguard/WGDashboard_Backup"
+
+# Remove ACL permissions for the app group
+# This allows other WireGuard packages to continue working
+if command -v setfacl >/dev/null 2>&1; then
+    setfacl -x g:"$app" /etc/wireguard 2>/dev/null || true
+fi
+
+# Remove IP forwarding configuration that we created
+# Always remove our config file if it exists, since:
+# - If no other WireGuard packages exist, we should clean up
+# - If other WireGuard packages exist, they have their own config and ours is redundant
+if [ -f "/etc/sysctl.d/$app.conf" ]; then
+    ynh_script_progression "Removing WireGuard IP forwarding configuration..."
+    ynh_safe_rm "/etc/sysctl.d/$app.conf"
+    # Note: We don't disable IP forwarding immediately as it might be in use
+    # Other WireGuard packages will have their own sysctl config if needed
+fi
+
+#=================================================
 # END OF SCRIPT
 #=================================================
 
