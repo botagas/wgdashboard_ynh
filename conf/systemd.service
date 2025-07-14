@@ -1,6 +1,7 @@
 [Unit]
 Description=Small description of the service
-After=network.target
+After=syslog.target network.target
+Wants=wg-quick.target
 
 [Service]
 Type=simple
@@ -32,6 +33,7 @@ ProtectKernelTunables=yes
 LockPersonality=yes
 SystemCallArchitectures=native
 SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @setuid @swap @cpu-emulation @privileged
+TimeoutSec=120
 
 # Denying access to capabilities that should not be relevant for webapps
 # Doc: https://man7.org/linux/man-pages/man7/capabilities.7.html
