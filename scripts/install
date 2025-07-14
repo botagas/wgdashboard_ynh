@@ -27,8 +27,23 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 ynh_script_progression "Adding $app's configuration files..."
 
-# chmod 400 "$install_dir/some_config_file"
-# chown "$app:$app" "$install_dir/some_config_file"
+# Set up Python virtual environment and install dependencies
+ynh_script_progression "Setting up Python virtual environment..."
+pushd "$install_dir"
+    python3 -m venv venv
+    venv/bin/pip install --upgrade pip
+    venv/bin/pip install -r src/requirements.txt
+popd
+
+# Create necessary directories for WGDashboard
+mkdir -p "$install_dir/src/log"
+mkdir -p "$install_dir/db" 
+mkdir -p "$install_dir/download"
+
+# Set proper permissions
+chown -R "$app:$app" "$install_dir"
+chmod -R 755 "$install_dir"
+chmod +x "$install_dir/src/wgd.sh"
 
 #=================================================
 # SYSTEM CONFIGURATION

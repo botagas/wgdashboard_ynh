@@ -1,21 +1,21 @@
 [Unit]
-Description=Small description of the service
+Description=A WireGuard Dashboard
 After=syslog.target network.target
 Wants=wg-quick.target
 
 [Service]
-Type=simple
+Type=forking
 User=__APP__
 Group=__APP__
-WorkingDirectory=__INSTALL_DIR__/
-ExecStart=__INSTALL_DIR__/script
+WorkingDirectory=__INSTALL_DIR__/src
+ExecStart=__INSTALL_DIR__/venv/bin/gunicorn --config __INSTALL_DIR__/src/gunicorn.conf.py
+ExecReload=/bin/kill -s HUP $MAINPID
+PIDFile=__INSTALL_DIR__/src/gunicorn.pid
 StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=inherit
+Environment=CONFIGURATION_PATH=__INSTALL_DIR__
 
-### Depending on specificities of your service/app, you may need to tweak these
-### .. but this should be a good baseline
-# Sandboxing options to harden security
-# Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
+### Sandboxing options to harden security
 NoNewPrivileges=yes
 PrivateTmp=yes
 PrivateDevices=yes
