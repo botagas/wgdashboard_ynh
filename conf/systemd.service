@@ -16,24 +16,26 @@ StandardError=inherit
 Environment=CONFIGURATION_PATH=__INSTALL_DIR__
 
 ### Sandboxing options to harden security
+# Based on wireguard_ynh package systemd configuration
 NoNewPrivileges=yes
 PrivateTmp=yes
 PrivateDevices=yes
-RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+# Disabling the following restriction since WGDashboard needs network access
+#RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 RestrictNamespaces=yes
 RestrictRealtime=yes
 DevicePolicy=closed
-ProtectClock=yes
-ProtectHostname=yes
-ProtectProc=invisible
 ProtectSystem=full
 ProtectControlGroups=yes
 ProtectKernelModules=yes
 ProtectKernelTunables=yes
 LockPersonality=yes
-SystemCallArchitectures=native
-SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @setuid @swap @cpu-emulation @privileged
-TimeoutSec=120
+SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @setuid @swap
+# Additional restrictive options that might be needed for enhanced security:
+#ProtectClock=yes
+#ProtectHostname=yes
+#SystemCallArchitectures=native
+#SystemCallFilter=~@cpu-emulation @privileged
 
 # Denying access to capabilities that should not be relevant for webapps
 # Doc: https://man7.org/linux/man-pages/man7/capabilities.7.html
@@ -44,8 +46,14 @@ CapabilityBoundingSet=~CAP_LEASE CAP_LINUX_IMMUTABLE CAP_IPC_LOCK
 CapabilityBoundingSet=~CAP_BLOCK_SUSPEND CAP_WAKE_ALARM
 CapabilityBoundingSet=~CAP_SYS_TTY_CONFIG
 CapabilityBoundingSet=~CAP_MAC_ADMIN CAP_MAC_OVERRIDE
-CapabilityBoundingSet=~CAP_NET_ADMIN CAP_NET_BROADCAST CAP_NET_RAW
 CapabilityBoundingSet=~CAP_SYS_ADMIN CAP_SYS_PTRACE CAP_SYSLOG
+
+# Allow capabilities needed for WireGuard management
+CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
+AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
+
+# Exception to ProtectSystem - allow access to WireGuard configs
+ReadWritePaths=/etc/wireguard
 
 [Install]
 WantedBy=multi-user.target
