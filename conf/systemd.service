@@ -18,7 +18,7 @@ Environment=CONFIGURATION_PATH=__INSTALL_DIR__
 ### Sandboxing options to harden security
 # Based on wireguard_ynh package systemd configuration
 # NoNewPrivileges disabled to allow sudo for WireGuard management
-#NoNewPrivileges=yes
+NoNewPrivileges=no
 PrivateTmp=yes
 PrivateDevices=yes
 # Disabling the following restriction since WGDashboard needs network access
