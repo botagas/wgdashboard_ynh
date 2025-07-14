@@ -45,6 +45,9 @@ chown -R "$app:$app" "$install_dir"
 chmod -R 755 "$install_dir"
 chmod +x "$install_dir/src/wgd.sh"
 
+# Add app user to wireguard group for WireGuard access
+usermod -a -G wireguard "$app"
+
 #=================================================
 # SYSTEM CONFIGURATION
 #=================================================
