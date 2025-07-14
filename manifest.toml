@@ -47,7 +47,7 @@ ram.runtime = "50M"
 
     [resources.sources.main]
     url = "https://github.com/donaldzou/WGDashboard/archive/refs/tags/v4.2.4.tar.gz"
-    sha256 = "24f1bd78460f7c21ee47be1ba248cb978e23ca12d7c0c40742888b915c5ac2e7"
+    sha256 = "a0138d10aba075b9a207f583fd059d878b40a00e2fb6278f6adfc5991d63dcbc"
 
     autoupdate.strategy = "latest_github_tag"
 
