@@ -29,6 +29,42 @@ ynh_setup_source --dest_dir="$install_dir" --full_replace
 chown -R "$app:www-data" "$install_dir"
 
 #=================================================
+# SET UP PYTHON ENVIRONMENT
+#=================================================
+ynh_script_progression "Setting up Python virtual environment..."
+
+pushd "$install_dir"
+    python3 -m venv venv
+    venv/bin/pip install --upgrade pip
+    venv/bin/pip install -r src/requirements.txt
+popd
+
+# CREATE NECESSARY DIRECTORIES
+ynh_script_progression "Creating necessary directories for WGDashboard..."
+
+mkdir -p "$install_dir/src/log"
+mkdir -p "$install_dir/db" 
+mkdir -p "$install_dir/download"
+
+# SET PROPER PERMISSIONS
+ynh_script_progression "Setting proper permissions..."
+
+chown -R "$app:$app" "$install_dir"
+chmod +x "$install_dir/src/wgd.sh"
+
+# CONFIGURE WIREGUARD DIRECTORY ACCESS
+ynh_script_progression "Configuring WireGuard directory access for WGDashboard..."
+
+setfacl -m g:"$app":rwx /etc/wireguard
+setfacl -d -m g:"$app":rw /etc/wireguard
+
+# ENSURE WGDASHBOARD BACKUP DIRECTORY EXISTS
+ynh_script_progression "Ensuring WGDashboard backup directory exists with proper permissions..."
+
+mkdir -p /etc/wireguard/WGDashboard_Backup
+chown "$app":"$app" /etc/wireguard/WGDashboard_Backup
+
+#=================================================
 # UPDATE A CONFIG FILE
 #=================================================
 ynh_script_progression "Updating $app's configuration files..."

@@ -101,6 +101,61 @@ ynh_script_progression "Starting $app's systemd service..."
 ynh_systemctl --service="$app" --action="start"
 
 #=================================================
+# AUTOMATED INITIAL SETUP
+#=================================================
+ynh_script_progression "Configuring WGDashboard initial setup..."
+
+# Set up WGDashboard credentials
+wg_user="$admin"
+
+# Handle password parameter
+if [[ -n "$password" ]]; then
+    wg_password="$password"
+else
+    # Generate a random password if none was supplied
+    wg_password=$(ynh_string_random)
+fi
+
+# Store credentials in app settings
+ynh_app_setting_set --key=wg_user --value="$wg_user"
+ynh_app_setting_set --key=wg_password --value="$wg_password"
+
+# Wait for WGDashboard to be ready
+sleep 5
+
+# Perform initial authentication with default credentials (admin/admin)
+auth_response=$(curl -s -X POST "http://127.0.0.1:$port_main_tcp/api/authenticate" \
+    -H "Content-Type: application/json" \
+    -d '{"username":"admin","password":"admin","totp":""}' \
+    --connect-timeout 10 --max-time 30)
+
+if echo "$auth_response" | grep -q '"status":true'; then
+    ynh_print_info "Initial authentication successful, proceeding with setup..."
+    
+    # Extract session cookies for subsequent request
+    cookies=$(curl -s -c - -X POST "http://127.0.0.1:$port_main_tcp/api/authenticate" \
+        -H "Content-Type: application/json" \
+        -d '{"username":"admin","password":"admin","totp":""}' | grep -E '(authToken|session)' | awk '{print $6"="$7}' | tr '\n' ';')
+    
+    # Complete the setup with the YunoHost admin user credentials
+    setup_response=$(curl -s -X POST "http://127.0.0.1:$port_main_tcp/api/Welcome_Finish" \
+        -H "Content-Type: application/json" \
+        -H "Cookie: $cookies" \
+        -d "{\"username\":\"$wg_user\",\"newPassword\":\"$wg_password\",\"repeatNewPassword\":\"$wg_password\",\"enable_totp\":false}" \
+        --connect-timeout 10 --max-time 30)
+    
+    if echo "$setup_response" | grep -q '"status":true'; then
+        ynh_print_info "WGDashboard setup completed successfully!"
+        ynh_print_info "Username: $wg_user"
+        ynh_print_info "Password: $wg_password"
+    else
+        ynh_print_warn "Failed to complete WGDashboard setup automatically. You will need to complete setup manually via web interface."
+    fi
+else
+    ynh_print_warn "Could not connect to WGDashboard for automatic setup. You may need to complete setup manually via web interface."
+fi
+
+#=================================================
 # END OF SCRIPT
 #=================================================
 
