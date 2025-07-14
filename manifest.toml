@@ -69,5 +69,3 @@ ram.runtime = "50M"
 
     [resources.apt]
     packages = "wireguard-tools, net-tools"
-
-    [resources.database]
