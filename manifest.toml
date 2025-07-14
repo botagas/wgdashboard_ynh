@@ -41,11 +41,6 @@ ram.runtime = "50M"
     [install.admin]
     type = "user"
 
-    [install.password]
-    help.en = "Use the help field to add an information for the admin about this question."
-    type = "password"
-    optional = true
-
 [resources]
 
     [resources.sources]
