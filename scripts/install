@@ -59,7 +59,7 @@ ynh_script_progression "Configuring WireGuard..."
 
 # Check if another WireGuard YunoHost package is already installed
 wireguard_already_configured=false
-if yunohost app list --installed | grep -q "id: wireguard" 2>/dev/null; then
+if yunohost app list | grep -q "id: wireguard" 2>/dev/null; then
     ynh_print_info "WireGuard is already installed via YunoHost package, skipping basic setup..."
     wireguard_already_configured=true
 fi
