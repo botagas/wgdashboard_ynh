@@ -50,8 +50,13 @@ set__wg_password() {
     local new_password="$wg_password"
     
     if [[ -n "$new_password" ]]; then
-        # Hash the password using WGDashboard's method (SHA256 in uppercase)
-        local hashed_password=$(echo -n "$new_password" | sha256sum | cut -d' ' -f1 | tr '[:lower:]' '[:upper:]')
+        # Hash the password using WGDashboard's method (bcrypt with cost 12)
+        local hashed_password=$(python3 -c "
+import bcrypt
+password = '$new_password'.encode('utf-8')
+hashed = bcrypt.hashpw(password, bcrypt.gensalt(rounds=12))
+print(hashed.decode('utf-8'))
+")
         
         ynh_app_setting_set --key=wg_password --value="$hashed_password"
         
