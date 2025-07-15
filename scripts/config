@@ -43,6 +43,7 @@ set__wg_user() {
         if [[ -f "$install_dir/wg-dashboard.ini" ]]; then
             ynh_replace --match="^username = .*" --replace="username = $new_username" --file="$install_dir/wg-dashboard.ini"
         fi
+        ynh_systemctl --service=$app --action="restart" --log_path="/var/log/$app/$app.log"
     fi
 }
 
