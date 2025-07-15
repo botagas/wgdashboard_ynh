@@ -15,13 +15,14 @@ StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=inherit
 Environment=CONFIGURATION_PATH=__INSTALL_DIR__
 
-### Sandboxing options to harden security
-# Based on wireguard_ynh package systemd configuration
-# NoNewPrivileges disabled to allow sudo for WireGuard management
+# Sandboxing options to harden security
+# Depending on specificities of your service/app, you may need to tweak these 
+# .. but this should be a good baseline
+# Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
 NoNewPrivileges=no
 PrivateTmp=yes
 PrivateDevices=yes
-# Disabling the following restriction since WGDashboard needs network access
+# Disabling the following restriction since the UI needs to poll the interfaces
 #RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 RestrictNamespaces=yes
 RestrictRealtime=yes
@@ -32,11 +33,6 @@ ProtectKernelModules=yes
 ProtectKernelTunables=yes
 LockPersonality=yes
 SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @setuid @swap
-# Additional restrictive options that might be needed for enhanced security:
-#ProtectClock=yes
-#ProtectHostname=yes
-#SystemCallArchitectures=native
-#SystemCallFilter=~@cpu-emulation @privileged
 
 # Denying access to capabilities that should not be relevant for webapps
 # Doc: https://man7.org/linux/man-pages/man7/capabilities.7.html
@@ -47,14 +43,15 @@ CapabilityBoundingSet=~CAP_LEASE CAP_LINUX_IMMUTABLE CAP_IPC_LOCK
 CapabilityBoundingSet=~CAP_BLOCK_SUSPEND CAP_WAKE_ALARM
 CapabilityBoundingSet=~CAP_SYS_TTY_CONFIG
 CapabilityBoundingSet=~CAP_MAC_ADMIN CAP_MAC_OVERRIDE
-# Removed CAP_SYS_ADMIN restriction to allow sudo
-CapabilityBoundingSet=~CAP_SYS_PTRACE CAP_SYSLOG
+# Disabling the following restriction since the UI needs to poll the interfaces
+#CapabilityBoundingSet=~CAP_NET_ADMIN CAP_NET_BROADCAST CAP_NET_RAW
+CapabilityBoundingSet=~CAP_SYS_ADMIN CAP_SYS_PTRACE CAP_SYSLOG 
 
-# Allow capabilities needed for WireGuard management including sudo access
-CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN
-AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN
+# Allowing this capabilities to display devices in "Connected peers" page
+CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
+AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
 
-# Exception to ProtectSystem - allow access to WireGuard configs
+# Exception to ProtectSystem
 ReadWritePaths=/etc/wireguard
 
 [Install]
