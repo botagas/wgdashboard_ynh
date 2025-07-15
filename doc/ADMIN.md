@@ -1,5 +1,7 @@
 # WGDashboard Administration
 
+This is NOT MEANT to be public facing or exposed in any shape or form to the internet. WGDashboard requires sudo privileges to an extent, and as such, it is highly discouraged to allow the service to be accessible outside the network.
+
 ## Configured information
 
 - The app install dir is `__INSTALL_DIR__`
@@ -10,7 +12,7 @@
 
 This package is designed to coexist with other YunoHost WireGuard packages:
 
-- Uses ACL-based permissions instead of conflicting ownership
+- Uses ACL-based permissions to avoid conflicts or permission issues
 - Detects existing WireGuard installations
 - Shares `/etc/wireguard` directory safely
-- Conditional system configuration to avoid conflicts
+- Conditional system configuration to ensure coexistence with other WireGuard implementations
