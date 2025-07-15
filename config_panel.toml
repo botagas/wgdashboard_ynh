@@ -6,7 +6,7 @@ name = "Main configuration"
     [main.admin_credentials]
     name = "Admin Credentials"
 
-        [main.admin_credentials.wg_username]
+        [main.admin_credentials.wg_user]
         ask = "Admin Username"
         type = "string"
         help = "Username for WGDashboard admin login"

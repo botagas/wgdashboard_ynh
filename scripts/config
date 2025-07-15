@@ -29,7 +29,7 @@ get__admin_password() {
 
 set__admin_username() {
     # The variable name matches the config panel field name
-    local new_username="$wg_username"
+    local new_username="$wg_user"
     
     ynh_app_setting_set --app=$app --key=wg_user --value="$new_username"
     
