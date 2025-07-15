@@ -32,7 +32,7 @@ ram.runtime = "50M"
 
     [install.path]
     type = "path"
-    default = "/example"
+    default = "/"
 
     [install.init_main_permission]
     type = "group"
@@ -44,7 +44,7 @@ ram.runtime = "50M"
     [install.password]
     type = "password"
     optional = true
-    
+
 [resources]
 
     [resources.sources]
