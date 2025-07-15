@@ -1,12 +1,19 @@
 #!/bin/bash
 
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
 source _common.sh
 source /usr/share/yunohost/helpers
 
+ynh_abort_if_errors
+
 #=================================================
-# RETRIEVE ARGUMENTS FROM THE MANIFEST
+# RETRIEVE ARGUMENTS
 #=================================================
 
+app=$YNH_APP_INSTANCE_NAME
 install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
 
 #=================================================
@@ -15,7 +22,12 @@ install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
 
 get__wg_user() {
     # Get current username from app settings
-    ynh_app_setting_get --app=$app --key=wg_user || echo "admin"
+    local current_user=$(ynh_app_setting_get --app=$app --key=wg_user)
+    if [[ -z "$current_user" ]]; then
+        echo "admin"
+    else
+        echo "$current_user"
+    fi
 }
 
 get__wg_password() {
@@ -61,10 +73,4 @@ set__wg_password() {
 # GENERIC FINALIZATION
 #=================================================
 
-ynh_app_config_apply() {
-    _ynh_app_config_apply
-}
-
-ynh_app_config_run() {
-    _ynh_app_config_run
-}
+ynh_app_config_run "$1"

@@ -10,8 +10,10 @@ name = "Main configuration"
         ask = "Admin Username"
         type = "string"
         help = "Username for WGDashboard admin login"
+        default = "admin"
 
         [main.admin_credentials.wg_password]
         ask = "Admin Password" 
         type = "password"
         help = "Password for WGDashboard admin login (will be hashed automatically)"
+        placeholder = "Enter new password to change"
