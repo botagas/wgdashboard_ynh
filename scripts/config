@@ -29,7 +29,7 @@ get__admin_password() {
 
 set__admin_username() {
     # The variable name matches the config panel field name
-    local new_username="$admin_username"
+    local new_username="$wg_username"
     
     ynh_app_setting_set --app=$app --key=wg_user --value="$new_username"
     
@@ -41,7 +41,7 @@ set__admin_username() {
 
 set__admin_password() {
     # The variable name matches the config panel field name
-    local new_password="$admin_password"
+    local new_password="$wg_password"
     
     # Hash the password using WGDashboard's method (SHA256)
     local hashed_password=$(echo -n "$new_password" | sha256sum | cut -d' ' -f1)

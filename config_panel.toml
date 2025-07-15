@@ -6,12 +6,12 @@ name = "Main configuration"
     [main.admin_credentials]
     name = "Admin Credentials"
 
-        [main.admin_credentials.admin_username]
+        [main.admin_credentials.wg_username]
         ask = "Admin Username"
         type = "string"
         help = "Username for WGDashboard admin login"
 
-        [main.admin_credentials.admin_password]
+        [main.admin_credentials.wg_password]
         ask = "Admin Password" 
         type = "password"
         help = "Password for WGDashboard admin login (will be hashed automatically)"
