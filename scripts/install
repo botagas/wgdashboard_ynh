@@ -27,7 +27,6 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 ynh_script_progression "Adding $app's configuration files..."
 
-# Set up Python virtual environment and install dependencies
 ynh_script_progression "Setting up Python virtual environment..."
 pushd "$install_dir"
     python3 -m venv venv
@@ -35,12 +34,10 @@ pushd "$install_dir"
     venv/bin/pip install -r src/requirements.txt
 popd
 
-# Create necessary directories for WGDashboard
 mkdir -p "$install_dir/src/log"
 mkdir -p "$install_dir/db" 
 mkdir -p "$install_dir/download"
 
-# Set proper permissions
 chown -R "$app:$app" "$install_dir"
 chmod +x "$install_dir/src/wgd.sh"
 
@@ -72,7 +69,6 @@ else
     ynh_print_info "IP forwarding already configured by existing WireGuard installation"
 fi
 
-# WGDashboard manages WireGuard configurations directly via wg-quick commands
 ynh_print_info "WGDashboard will manage WireGuard configurations directly"
 
 #=================================================
@@ -90,15 +86,12 @@ ynh_print_info "Sudo permissions configured for WireGuard management"
 #=================================================
 ynh_script_progression "Adding system configurations related to $app..."
 
-# Create a dedicated NGINX config using the conf/nginx.conf template
 ynh_config_add_nginx
 
-# Create a dedicated systemd config
 ynh_config_add_systemd
 
 yunohost service add "$app" --description="A WireGuard Dashboard" --log="/var/log/$app/$app.log"
 
-# Use logrotate to manage application logfile(s)
 ynh_config_add_logrotate
 
 #=================================================
@@ -106,7 +99,6 @@ ynh_config_add_logrotate
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-# Start a systemd service
 ynh_systemctl --service="$app" --action="start"
 
 #=================================================
@@ -114,18 +106,14 @@ ynh_systemctl --service="$app" --action="start"
 #=================================================
 ynh_script_progression "Configuring WGDashboard initial setup..."
 
-# Set up WGDashboard credentials
 wg_user="$admin"
 
-# Handle password parameter
 if [[ -n "$password" ]]; then
     wg_password="$password"
 else
-    # Generate a random password if none was supplied
     wg_password=$(ynh_string_random)
 fi
 
-# Store credentials in app settings
 ynh_app_setting_set --app=$app --key=wg_user --value="$wg_user"
 ynh_app_setting_set --app=$app --key=wg_password --value="$wg_password"
 
@@ -169,18 +157,15 @@ fi
 #=================================================
 ynh_script_progression "Setting up WireGuard command wrappers..."
 
-# Create wrapper directory
+# Create and install wrapper 
 mkdir -p "$install_dir/bin"
 
-# Install wg wrapper
 cp "../conf/wg-wrapper.sh" "$install_dir/bin/wg"
 chmod +x "$install_dir/bin/wg"
 
-# Install wg-quick wrapper
 cp "../conf/wg-quick-wrapper.sh" "$install_dir/bin/wg-quick"
 chmod +x "$install_dir/bin/wg-quick"
 
-# Set ownership
 chown "$app":"$app" "$install_dir/bin/wg" "$install_dir/bin/wg-quick"
 
 ynh_print_info "WireGuard command wrappers installed"

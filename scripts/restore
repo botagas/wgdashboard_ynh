@@ -4,7 +4,6 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-# Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
@@ -39,10 +38,8 @@ ynh_restore "/etc/cron.d/$app"
 ynh_restore "/etc/$app/"
 ynh_restore "/var/log/$app/"
 
-# Restore WGDashboard backup directory
 ynh_restore "/etc/wireguard/WGDashboard_Backup/"
 
-# Restore WireGuard system configuration
 ynh_restore "/etc/sysctl.d/$app.conf"
 sysctl -p "/etc/sysctl.d/$app.conf"
 
@@ -55,7 +52,6 @@ ynh_script_progression "Restoring WireGuard permissions..."
 setfacl -m g:"$app":rwx /etc/wireguard
 setfacl -d -m g:"$app":rw /etc/wireguard
 
-# Ensure proper ownership of backup directory
 chown -R "$app":"$app" /etc/wireguard/WGDashboard_Backup
 
 #=================================================

@@ -18,7 +18,6 @@ install_dir=$(ynh_app_setting_get --key=install_dir)
 #=================================================
 
 get__wg_user() {
-    # Get current username from app settings
     local current_user=$(ynh_app_setting_get --key=wg_user)
     if [[ -z "$current_user" ]]; then
         echo "admin"
@@ -28,8 +27,7 @@ get__wg_user() {
 }
 
 get__wg_password() {
-    # We don't return the actual password for security reasons
-    echo "********"
+    echo ""
 }
 
 #=================================================
@@ -37,33 +35,32 @@ get__wg_password() {
 #=================================================
 
 set__wg_user() {
-    # The variable name matches the config panel field name
     local new_username="$wg_user"
     
-    ynh_app_setting_set --key=wg_user --value="$new_username"
-    
-    # Update username in config file
-    if [[ -f "$install_dir/wg-dashboard.ini" ]]; then
-        ynh_replace_string --match_string="^username = .*" --replace_string="username = $new_username" --target_file="$install_dir/wg-dashboard.ini"
+    if [[ -n "$new_username" ]]; then
+        ynh_app_setting_set --key=wg_user --value="$new_username"
+        
+        if [[ -f "$install_dir/wg-dashboard.ini" ]]; then
+            ynh_replace_string --match_string="^username = .*" --replace_string="username = $new_username" --target_file="$install_dir/wg-dashboard.ini"
+        fi
     fi
 }
 
 set__wg_password() {
-    # The variable name matches the config panel field name
     local new_password="$wg_password"
     
-    # Hash the password using WGDashboard's method (SHA256)
-    local hashed_password=$(echo -n "$new_password" | sha256sum | cut -d' ' -f1)
-    
-    ynh_app_setting_set --key=wg_password --value="$hashed_password"
-    
-    # Update password in config file
-    if [[ -f "$install_dir/wg-dashboard.ini" ]]; then
-        ynh_replace_string --match_string="^password = .*" --replace_string="password = $hashed_password" --target_file="$install_dir/wg-dashboard.ini"
+    if [[ -n "$new_password" ]]; then
+        # Hash the password using WGDashboard's method (SHA256)
+        local hashed_password=$(echo -n "$new_password" | sha256sum | cut -d' ' -f1)
+        
+        ynh_app_setting_set --key=wg_password --value="$hashed_password"
+        
+        if [[ -f "$install_dir/wg-dashboard.ini" ]]; then
+            ynh_replace_string --match_string="^password = .*" --replace_string="password = $hashed_password" --target_file="$install_dir/wg-dashboard.ini"
+        fi
+        
+        ynh_systemd_action --service_name=$app --action="restart" --log_path="/var/log/$app/$app.log"
     fi
-    
-    # Restart the service to apply changes
-    ynh_systemd_action --service_name=$app --action="restart" --log_path="/var/log/$app/$app.log"
 }
 
 #=================================================

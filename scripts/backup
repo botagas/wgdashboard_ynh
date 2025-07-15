@@ -19,13 +19,10 @@ ynh_backup "$install_dir"
 # BACKUP SYSTEM CONFIGURATION
 #=================================================
 
-# Backup the NGINX configuration
 ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
 
-# Backup the systemd service unit
 ynh_backup "/etc/systemd/system/$app.service"
 
-# Backup the logrotate configuration
 ynh_backup "/etc/logrotate.d/$app"
 
 #=================================================
@@ -38,10 +35,8 @@ ynh_backup "/etc/$app/"
 
 ynh_backup "/var/log/$app/"
 
-# Backup WGDashboard's backup directory (contains WireGuard config backups)
 ynh_backup "/etc/wireguard/WGDashboard_Backup/"
 
-# Backup WireGuard system configuration
 ynh_backup "/etc/sysctl.d/$app.conf"
 
 ynh_backup "/etc/sudoers.d/$app"
