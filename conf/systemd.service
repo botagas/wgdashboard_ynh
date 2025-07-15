@@ -15,24 +15,24 @@ StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=inherit
 Environment=CONFIGURATION_PATH=__INSTALL_DIR__
 
-# Sandboxing options to harden security
-# Depending on specificities of your service/app, you may need to tweak these 
-# .. but this should be a good baseline
+# Sandboxing options adapted for WireGuard management requirements
+# WGDashboard needs relaxed restrictions for sudo wg-quick operations
 # Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
 NoNewPrivileges=no
 PrivateTmp=yes
-PrivateDevices=yes
+PrivateDevices=no
 # Disabling the following restriction since the UI needs to poll the interfaces
 #RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
-RestrictNamespaces=yes
+RestrictNamespaces=no
 RestrictRealtime=yes
-DevicePolicy=closed
-ProtectSystem=full
+DevicePolicy=auto
+ProtectSystem=strict
 ProtectControlGroups=yes
-ProtectKernelModules=yes
-ProtectKernelTunables=yes
+ProtectKernelModules=no
+ProtectKernelTunables=no
 LockPersonality=yes
-SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @setuid @swap
+# Removed @setuid restriction to allow sudo operations
+SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @swap
 
 # Denying access to capabilities that should not be relevant for webapps
 # Doc: https://man7.org/linux/man-pages/man7/capabilities.7.html
@@ -48,12 +48,12 @@ CapabilityBoundingSet=~CAP_MAC_ADMIN CAP_MAC_OVERRIDE
 # Removed CAP_SYS_ADMIN from denial to allow sudo operations
 CapabilityBoundingSet=~CAP_SYS_PTRACE CAP_SYSLOG 
 
-# Allowing this capabilities to display devices in "Connected peers" page
-CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
-AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
+# Allowing capabilities needed for WireGuard management and sudo operations
+CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN CAP_SETUID CAP_SETGID
+AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN
 
-# Exception to ProtectSystem
-ReadWritePaths=/etc/wireguard
+# Exception to ProtectSystem - allow writes to WireGuard config and system directories
+ReadWritePaths=/etc/wireguard /run /tmp
 
 [Install]
 WantedBy=multi-user.target
