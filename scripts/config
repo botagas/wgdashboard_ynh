@@ -7,14 +7,11 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-ynh_abort_if_errors
-
 #=================================================
 # RETRIEVE ARGUMENTS
 #=================================================
 
-app=$YNH_APP_INSTANCE_NAME
-install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
+install_dir=$(ynh_app_setting_get --key=install_dir)
 
 #=================================================
 # SPECIFIC GETTERS FOR TOML SHORT KEYS
@@ -22,7 +19,7 @@ install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
 
 get__wg_user() {
     # Get current username from app settings
-    local current_user=$(ynh_app_setting_get --app=$app --key=wg_user)
+    local current_user=$(ynh_app_setting_get --key=wg_user)
     if [[ -z "$current_user" ]]; then
         echo "admin"
     else
@@ -43,7 +40,7 @@ set__wg_user() {
     # The variable name matches the config panel field name
     local new_username="$wg_user"
     
-    ynh_app_setting_set --app=$app --key=wg_user --value="$new_username"
+    ynh_app_setting_set --key=wg_user --value="$new_username"
     
     # Update username in config file
     if [[ -f "$install_dir/wg-dashboard.ini" ]]; then
@@ -58,7 +55,7 @@ set__wg_password() {
     # Hash the password using WGDashboard's method (SHA256)
     local hashed_password=$(echo -n "$new_password" | sha256sum | cut -d' ' -f1)
     
-    ynh_app_setting_set --app=$app --key=wg_password --value="$hashed_password"
+    ynh_app_setting_set --key=wg_password --value="$hashed_password"
     
     # Update password in config file
     if [[ -f "$install_dir/wg-dashboard.ini" ]]; then
@@ -73,4 +70,4 @@ set__wg_password() {
 # GENERIC FINALIZATION
 #=================================================
 
-ynh_app_config_run "$1"
+ynh_app_config_run $1
