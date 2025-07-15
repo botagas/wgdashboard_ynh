@@ -34,7 +34,7 @@ LockPersonality=yes
 # Removed @setuid restriction to allow sudo operations
 SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @swap
 
-# Denying access to capabilities that should not be relevant for webapps
+# Allowing only the capabilities needed for WireGuard management and sudo operations
 # Doc: https://man7.org/linux/man-pages/man7/capabilities.7.html
 CapabilityBoundingSet=~CAP_RAWIO CAP_MKNOD
 CapabilityBoundingSet=~CAP_AUDIT_CONTROL CAP_AUDIT_READ CAP_AUDIT_WRITE
@@ -43,14 +43,7 @@ CapabilityBoundingSet=~CAP_LEASE CAP_LINUX_IMMUTABLE CAP_IPC_LOCK
 CapabilityBoundingSet=~CAP_BLOCK_SUSPEND CAP_WAKE_ALARM
 CapabilityBoundingSet=~CAP_SYS_TTY_CONFIG
 CapabilityBoundingSet=~CAP_MAC_ADMIN CAP_MAC_OVERRIDE
-# Disabling the following restriction since the UI needs to poll the interfaces
-#CapabilityBoundingSet=~CAP_NET_ADMIN CAP_NET_BROADCAST CAP_NET_RAW
-# Removed CAP_SYS_ADMIN from denial to allow sudo operations
-CapabilityBoundingSet=~CAP_SYS_PTRACE CAP_SYSLOG 
-
-# Allowing capabilities needed for WireGuard management and sudo operations
-CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN CAP_SETUID CAP_SETGID
-AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN
+CapabilityBoundingSet=~CAP_SYS_ADMIN CAP_SYS_PTRACE CAP_SYSLOG
 
 # Exception to ProtectSystem - allow writes to WireGuard config and application directories
 ReadWritePaths=/etc/wireguard __INSTALL_DIR__
