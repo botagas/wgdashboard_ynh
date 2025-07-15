@@ -45,7 +45,8 @@ CapabilityBoundingSet=~CAP_SYS_TTY_CONFIG
 CapabilityBoundingSet=~CAP_MAC_ADMIN CAP_MAC_OVERRIDE
 # Disabling the following restriction since the UI needs to poll the interfaces
 #CapabilityBoundingSet=~CAP_NET_ADMIN CAP_NET_BROADCAST CAP_NET_RAW
-CapabilityBoundingSet=~CAP_SYS_ADMIN CAP_SYS_PTRACE CAP_SYSLOG 
+# Removed CAP_SYS_ADMIN from denial to allow sudo operations
+CapabilityBoundingSet=~CAP_SYS_PTRACE CAP_SYSLOG 
 
 # Allowing this capabilities to display devices in "Connected peers" page
 CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW
