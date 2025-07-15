@@ -13,12 +13,12 @@ install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
 # SPECIFIC GETTERS FOR TOML SHORT KEYS
 #=================================================
 
-get__admin_username() {
+get__wg_user() {
     # Get current username from app settings
     ynh_app_setting_get --app=$app --key=wg_user || echo "admin"
 }
 
-get__admin_password() {
+get__wg_password() {
     # We don't return the actual password for security reasons
     echo "********"
 }
@@ -27,7 +27,7 @@ get__admin_password() {
 # SPECIFIC SETTERS FOR TOML SHORT KEYS  
 #=================================================
 
-set__admin_username() {
+set__wg_user() {
     # The variable name matches the config panel field name
     local new_username="$wg_user"
     
@@ -39,7 +39,7 @@ set__admin_username() {
     fi
 }
 
-set__admin_password() {
+set__wg_password() {
     # The variable name matches the config panel field name
     local new_password="$wg_password"
     
