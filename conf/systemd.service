@@ -14,6 +14,7 @@ PIDFile=__INSTALL_DIR__/src/gunicorn.pid
 StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=inherit
 Environment=CONFIGURATION_PATH=__INSTALL_DIR__
+Environment=PATH=__INSTALL_DIR__/bin:/usr/local/bin:/usr/bin:/bin
 
 # Minimal sandboxing for debugging sudo issues
 # Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html

@@ -76,6 +76,16 @@ fi
 ynh_print_info "WGDashboard will manage WireGuard configurations directly"
 
 #=================================================
+# SUDOERS CONFIGURATION
+#=================================================
+ynh_script_progression "Configuring sudo permissions for WireGuard management..."
+
+# Allow WGDashboard user to run WireGuard commands without password
+echo "$app ALL=(ALL) NOPASSWD: /usr/bin/wg, /usr/bin/wg-quick" > "/etc/sudoers.d/$app"
+
+ynh_print_info "Sudo permissions configured for WireGuard management"
+
+#=================================================
 # SYSTEM CONFIGURATION
 #=================================================
 ynh_script_progression "Adding system configurations related to $app..."
@@ -155,14 +165,25 @@ else
 fi
 
 #=================================================
-# SUDOERS CONFIGURATION
+# WRAPPER SCRIPT INSTALLATION
 #=================================================
-ynh_script_progression "Configuring sudo permissions for WireGuard management..."
+ynh_script_progression "Setting up WireGuard command wrappers..."
 
-# Allow WGDashboard user to run WireGuard commands without password
-echo "$app ALL=(ALL) NOPASSWD: /usr/bin/wg, /usr/bin/wg-quick" > "/etc/sudoers.d/$app"
+# Create wrapper directory
+mkdir -p "$install_dir/bin"
 
-ynh_print_info "Sudo permissions configured for WireGuard management"
+# Install wg wrapper
+cp "../conf/wg-wrapper.sh" "$install_dir/bin/wg"
+chmod +x "$install_dir/bin/wg"
+
+# Install wg-quick wrapper
+cp "../conf/wg-quick-wrapper.sh" "$install_dir/bin/wg-quick"
+chmod +x "$install_dir/bin/wg-quick"
+
+# Set ownership
+chown "$app":"$app" "$install_dir/bin/wg" "$install_dir/bin/wg-quick"
+
+ynh_print_info "WireGuard command wrappers installed"
 
 #=================================================
 # END OF SCRIPT
