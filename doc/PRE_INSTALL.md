@@ -2,8 +2,7 @@ This is NOT MEANT to be public facing or exposed in any shape or form to the int
 
 This installation script will set the admin user (which will be selected by you) and password, which will be randomly generated (unless specified otherwise).
 
-#### Current limitations
-- There is no simple way of changing the credentials and updating them in the app settings in YunoHost where they are stored. 
+#### Warning
 - This does not support SSO or LDAP and is intended for local use only. External exposure is not advised.
 
 
