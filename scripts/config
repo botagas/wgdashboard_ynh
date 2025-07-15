@@ -41,7 +41,7 @@ set__wg_user() {
         ynh_app_setting_set --key=wg_user --value="$new_username"
         
         if [[ -f "$install_dir/wg-dashboard.ini" ]]; then
-            ynh_replace_string --match_string="^username = .*" --replace_string="username = $new_username" --target_file="$install_dir/wg-dashboard.ini"
+            ynh_replace --match="^username = .*" --replace="username = $new_username" --file="$install_dir/wg-dashboard.ini"
         fi
     fi
 }
@@ -56,7 +56,7 @@ set__wg_password() {
         ynh_app_setting_set --key=wg_password --value="$hashed_password"
         
         if [[ -f "$install_dir/wg-dashboard.ini" ]]; then
-            ynh_replace_string --match_string="^password = .*" --replace_string="password = $hashed_password" --target_file="$install_dir/wg-dashboard.ini"
+            ynh_replace --match="^password = .*" --replace="password = $hashed_password" --file="$install_dir/wg-dashboard.ini"
         fi
         
         ynh_systemd_action --service_name=$app --action="restart" --log_path="/var/log/$app/$app.log"
