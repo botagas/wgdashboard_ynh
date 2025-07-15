@@ -15,29 +15,26 @@ StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=inherit
 Environment=CONFIGURATION_PATH=__INSTALL_DIR__
 
-# Sandboxing options adapted for WireGuard management requirements
-# WGDashboard needs relaxed restrictions for sudo wg-quick operations
+# Minimal sandboxing for debugging sudo issues
 # Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
 NoNewPrivileges=no
-PrivateTmp=yes
+PrivateTmp=no
 PrivateDevices=no
-# Disabling the following restriction since the UI needs to poll the interfaces
-#RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 RestrictNamespaces=no
-RestrictRealtime=yes
+RestrictRealtime=no
 DevicePolicy=auto
-ProtectSystem=full
-ProtectControlGroups=yes
+ProtectSystem=no
+ProtectControlGroups=no
 ProtectKernelModules=no
 ProtectKernelTunables=no
-LockPersonality=yes
-# Removed @setuid restriction to allow sudo operations
-SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @swap
+LockPersonality=no
+# Remove all system call filtering to debug
+#SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @swap
 
-# Allowing only the capabilities needed for WireGuard management and sudo operations
+# Remove capability restrictions for debugging
 # Doc: https://man7.org/linux/man-pages/man7/capabilities.7.html
-CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN CAP_SETUID CAP_SETGID
-AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN CAP_SETUID CAP_SETGID
+#CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN CAP_SETUID CAP_SETGID
+#AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN CAP_SETUID CAP_SETGID
 
 # Exception to ProtectSystem - allow writes to WireGuard config and application directories
 ReadWritePaths=/etc/wireguard __INSTALL_DIR__
