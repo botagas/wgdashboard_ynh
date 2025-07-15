@@ -51,7 +51,8 @@ set__wg_password() {
     
     if [[ -n "$new_password" ]]; then
         # Hash the password using WGDashboard's method (bcrypt with cost 12)
-        local hashed_password=$(python3 -c "
+        # Use WGDashboard's venv where bcrypt is already installed
+        local hashed_password=$("$install_dir/venv/bin/python3" -c "
 import bcrypt
 password = '$new_password'.encode('utf-8')
 hashed = bcrypt.hashpw(password, bcrypt.gensalt(rounds=12))
