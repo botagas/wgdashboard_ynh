@@ -1,0 +1,70 @@
+#!/bin/bash
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
+install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
+
+#=================================================
+# SPECIFIC GETTERS FOR TOML SHORT KEYS
+#=================================================
+
+get__admin_username() {
+    # Get current username from app settings
+    ynh_app_setting_get --app=$app --key=wg_user || echo "admin"
+}
+
+get__admin_password() {
+    # We don't return the actual password for security reasons
+    echo "********"
+}
+
+#=================================================
+# SPECIFIC SETTERS FOR TOML SHORT KEYS  
+#=================================================
+
+set__admin_username() {
+    # The variable name matches the config panel field name
+    local new_username="$admin_username"
+    
+    ynh_app_setting_set --app=$app --key=wg_user --value="$new_username"
+    
+    # Update username in config file
+    if [[ -f "$install_dir/wg-dashboard.ini" ]]; then
+        ynh_replace_string --match_string="^username = .*" --replace_string="username = $new_username" --target_file="$install_dir/wg-dashboard.ini"
+    fi
+}
+
+set__admin_password() {
+    # The variable name matches the config panel field name
+    local new_password="$admin_password"
+    
+    # Hash the password using WGDashboard's method (SHA256)
+    local hashed_password=$(echo -n "$new_password" | sha256sum | cut -d' ' -f1)
+    
+    ynh_app_setting_set --app=$app --key=wg_password --value="$hashed_password"
+    
+    # Update password in config file
+    if [[ -f "$install_dir/wg-dashboard.ini" ]]; then
+        ynh_replace_string --match_string="^password = .*" --replace_string="password = $hashed_password" --target_file="$install_dir/wg-dashboard.ini"
+    fi
+    
+    # Restart the service to apply changes
+    ynh_systemd_action --service_name=$app --action="restart" --log_path="/var/log/$app/$app.log"
+}
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+
+ynh_app_config_apply() {
+    _ynh_app_config_apply
+}
+
+ynh_app_config_run() {
+    _ynh_app_config_run
+}
