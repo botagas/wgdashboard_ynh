@@ -21,7 +21,7 @@ A management dashboard for WireGuard servers.
 
 [![Automatic tests level](https://yunorunner.tiesiog.lt/api/badge/wgdashboard/integration)](https://ci-apps.yunohost.org/ci/apps/wgdashboard/)
 
-🛠️ Upstream Jellystat repository: <https://github.com/donaldzou/WGDashboard>
+🛠️ Upstream WGDashboard repository: <https://github.com/donaldzou/WGDashboard>
 
 Pull request are welcome and should target the [`testing` branch](https://github.com/YunoHost-Apps/wgdashboard_ynh/tree/testing).
 
@@ -31,7 +31,7 @@ The `testing` branch can be tested using:
 sudo yunohost app install https://github.com/YunoHost-Apps/wgdashboard_ynh/tree/testing
 
 # upgrade an existing install:
-sudo yunohost app upgrade jellystat -u https://github.com/YunoHost-Apps/wgdashboard_ynh/tree/testing
+sudo yunohost app upgrade wgdashboard -u https://github.com/YunoHost-Apps/wgdashboard_ynh/tree/testing
 ```
 
 ### 📚 App packaging documentation
