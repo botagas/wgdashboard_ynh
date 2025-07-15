@@ -59,6 +59,14 @@ setfacl -d -m g:"$app":rw /etc/wireguard
 chown -R "$app":"$app" /etc/wireguard/WGDashboard_Backup
 
 #=================================================
+# RESTORE SUDOERS CONFIGURATION
+#=================================================
+ynh_script_progression "Restoring sudoers configuration for WireGuard management..."
+
+# Restore sudoers configuration for WireGuard management
+echo "$app ALL=(ALL) NOPASSWD: /usr/bin/wg, /usr/bin/wg-quick" > "/etc/sudoers.d/$app"
+
+#=================================================
 # RELOAD NGINX AND PHP-FPM OR THE APP SERVICE
 #=================================================
 ynh_script_progression "Reloading NGINX web server and $app's service..."

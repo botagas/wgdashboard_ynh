@@ -44,6 +44,8 @@ ynh_backup "/etc/wireguard/WGDashboard_Backup/"
 # Backup WireGuard system configuration
 ynh_backup "/etc/sysctl.d/$app.conf"
 
+ynh_backup "/etc/sudoers.d/$app"
+
 #=================================================
 # END OF SCRIPT
 #=================================================

@@ -155,6 +155,16 @@ else
 fi
 
 #=================================================
+# SUDOERS CONFIGURATION
+#=================================================
+ynh_script_progression "Configuring sudo permissions for WireGuard management..."
+
+# Allow WGDashboard user to run WireGuard commands without password
+echo "$app ALL=(ALL) NOPASSWD: /usr/bin/wg, /usr/bin/wg-quick" > "/etc/sudoers.d/$app"
+
+ynh_print_info "Sudo permissions configured for WireGuard management"
+
+#=================================================
 # END OF SCRIPT
 #=================================================
 
