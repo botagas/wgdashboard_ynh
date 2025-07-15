@@ -26,7 +26,7 @@ PrivateDevices=no
 RestrictNamespaces=no
 RestrictRealtime=yes
 DevicePolicy=auto
-ProtectSystem=strict
+ProtectSystem=full
 ProtectControlGroups=yes
 ProtectKernelModules=no
 ProtectKernelTunables=no
@@ -52,8 +52,8 @@ CapabilityBoundingSet=~CAP_SYS_PTRACE CAP_SYSLOG
 CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN CAP_SETUID CAP_SETGID
 AmbientCapabilities=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN
 
-# Exception to ProtectSystem - allow writes to WireGuard config and system directories
-ReadWritePaths=/etc/wireguard /run /tmp
+# Exception to ProtectSystem - allow writes to WireGuard config and application directories
+ReadWritePaths=/etc/wireguard __INSTALL_DIR__
 
 [Install]
 WantedBy=multi-user.target
