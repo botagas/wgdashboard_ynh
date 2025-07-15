@@ -16,10 +16,10 @@ StandardError=inherit
 Environment=CONFIGURATION_PATH=__INSTALL_DIR__
 Environment=PATH=__INSTALL_DIR__/bin:/usr/local/bin:/usr/bin:/bin
 
-# Sandboxing options to harden security - restored with wrapper support
-# WGDashboard uses wrapper scripts for WireGuard operations
+# Sandboxing options to harden security - balanced approach for wrapper support
+# NoNewPrivileges must be 'no' to allow sudo execution in wrapper scripts
 # Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
-NoNewPrivileges=yes
+NoNewPrivileges=no
 PrivateTmp=yes
 PrivateDevices=yes
 RestrictNamespaces=yes
@@ -32,9 +32,9 @@ ProtectKernelTunables=yes
 LockPersonality=yes
 SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @swap
 
-# Capability restrictions for enhanced security
+# Capability restrictions for enhanced security - modified for wrapper support
 # Doc: https://man7.org/linux/man-pages/man7/capabilities.7.html
-# Denying access to capabilities that should not be relevant for webapps
+# Allow necessary capabilities for sudo operations while blocking dangerous ones
 CapabilityBoundingSet=~CAP_RAWIO CAP_MKNOD
 CapabilityBoundingSet=~CAP_AUDIT_CONTROL CAP_AUDIT_READ CAP_AUDIT_WRITE
 CapabilityBoundingSet=~CAP_SYS_BOOT CAP_SYS_TIME CAP_SYS_MODULE CAP_SYS_PACCT
@@ -42,11 +42,11 @@ CapabilityBoundingSet=~CAP_LEASE CAP_LINUX_IMMUTABLE CAP_IPC_LOCK
 CapabilityBoundingSet=~CAP_BLOCK_SUSPEND CAP_WAKE_ALARM
 CapabilityBoundingSet=~CAP_SYS_TTY_CONFIG
 CapabilityBoundingSet=~CAP_MAC_ADMIN CAP_MAC_OVERRIDE
-CapabilityBoundingSet=~CAP_SYS_ADMIN CAP_SYS_PTRACE CAP_SYSLOG
-CapabilityBoundingSet=~CAP_NET_ADMIN CAP_NET_BROADCAST CAP_NET_RAW
+CapabilityBoundingSet=~CAP_SYS_PTRACE CAP_SYSLOG
+# Note: CAP_SYS_ADMIN, CAP_NET_ADMIN, CAP_NET_RAW allowed for WireGuard wrapper operations
 
-# Allow basic capabilities for file access and networking
-CapabilityBoundingSet=CAP_DAC_READ_SEARCH
+# Allow capabilities needed for sudo and WireGuard operations
+CapabilityBoundingSet=CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW CAP_SYS_ADMIN CAP_SETUID CAP_SETGID
 
 # Exception to ProtectSystem - allow writes to WireGuard config and application directories
 ReadWritePaths=/etc/wireguard __INSTALL_DIR__
