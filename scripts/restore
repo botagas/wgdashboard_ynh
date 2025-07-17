@@ -48,10 +48,11 @@ sysctl -p "/etc/sysctl.d/$app.conf"
 ynh_script_progression "Restoring WireGuard permissions..."
 
 # Restore ACL permissions for WireGuard directory access
-setfacl -m g:"$app":rwx /etc/wireguard
-setfacl -d -m g:"$app":rw /etc/wireguard
-
-chown -R "$app":"$app" /etc/wireguard/WGDashboard_Backup
+if [ -d "/var/www/myapp" ]; then
+    setfacl -m g:"$app":rwx /etc/wireguard
+    setfacl -d -m g:"$app":rw /etc/wireguard
+    chown -R "$app":"$app" /etc/wireguard/WGDashboard_Backup
+fi
 
 #=================================================
 # RESTORE SUDOERS CONFIGURATION
