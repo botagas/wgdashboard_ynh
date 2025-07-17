@@ -3,7 +3,7 @@ This is NOT MEANT to be public facing or exposed in any shape or form to the int
 This installation script will set the admin user (which will be selected by you) and password, which will be randomly generated (unless specified otherwise).
 
 #### System Requirements
-- Python 3.10 or higher is required for WGDashboard 4.2.4+ (automatically installed)
+- Python 3.9 or higher (automatic compatibility fixes applied if needed)
 
 #### Warning
 - This does not support SSO or LDAP and is intended for local use only. External exposure is not advised.

@@ -34,9 +34,22 @@ chown -R "$app:www-data" "$install_dir"
 ynh_script_progression "Setting up Python virtual environment..."
 
 pushd "$install_dir"
-    python3.10 -m venv venv
+    # Check Python version before creating venv
+    python_version=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}')")
+    ynh_print_info "Using Python version: $python_version"
+    
+    python3 -m venv venv
     venv/bin/pip install --upgrade pip
     venv/bin/pip install -r src/requirements.txt
+    
+    # Test if the problematic import works
+    ynh_print_info "Testing Python type hints compatibility..."
+    if ! venv/bin/python -c "from src.Utilities import GenerateWireguardPublicKey" 2>/dev/null; then
+        ynh_print_warn "Type hints compatibility issue detected, applying fix..."
+        # Simple sed-based fix for Python 3.9 compatibility
+        sed -i '1i from typing import Union' src/Utilities.py
+        sed -i 's/-> tuple\[bool, str\] | tuple\[bool, None\]/-> Union[tuple[bool, str], tuple[bool, None]]/g' src/Utilities.py
+    fi
 popd
 
 ynh_script_progression "Creating necessary directories for WGDashboard..."

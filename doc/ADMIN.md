@@ -4,7 +4,7 @@ This is NOT MEANT to be public facing or exposed in any shape or form to the int
 
 ## System Requirements
 
-- Python 3.10 or higher (automatically installed during setup)
+- Python 3.9 or higher (automatic compatibility fixes applied during installation if needed)
 
 ## Configured information
 
