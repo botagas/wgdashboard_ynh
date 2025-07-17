@@ -7,6 +7,7 @@ Converts Python 3.10+ union type hints to Python 3.9 compatible syntax
 import sys
 import os
 import re
+import argparse
 from pathlib import Path
 
 def check_python_version():
@@ -68,6 +69,11 @@ def patch_utilities_file(file_path):
 
 def main():
     """Main function"""
+    parser = argparse.ArgumentParser(description='Python 3.9 Compatibility Patcher for WGDashboard')
+    parser.add_argument('install_dir', nargs='?', default=None, 
+                       help='WGDashboard installation directory (optional)')
+    args = parser.parse_args()
+    
     python_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
     print(f"🐍 Python version: {python_version}")
     
@@ -78,11 +84,30 @@ def main():
     print(f"🔧 Python 3.9 detected, applying compatibility patches...")
     
     # Find Utilities.py file
-    utilities_path = Path('src/Utilities.py')
-    if not utilities_path.exists():
-        utilities_path = Path('Utilities.py')
+    if args.install_dir:
+        # Use provided install directory
+        utilities_path = Path(args.install_dir) / 'src' / 'Utilities.py'
         if not utilities_path.exists():
-            print("❌ Could not find Utilities.py file")
+            print(f"❌ Could not find Utilities.py at {utilities_path}")
+            return 1
+    else:
+        # Fallback to searching multiple possible locations
+        possible_paths = [
+            Path('src/Utilities.py'),          # When run from install_dir
+            Path('Utilities.py'),              # When run from src dir
+            Path('../src/Utilities.py'),       # When run from scripts dir
+        ]
+        
+        utilities_path = None
+        for path in possible_paths:
+            if path.exists():
+                utilities_path = path
+                break
+        
+        if utilities_path is None:
+            print("❌ Could not find Utilities.py file in any expected location")
+            print("   Searched paths:", [str(p) for p in possible_paths])
+            print("   Try passing the install directory as an argument")
             return 1
     
     success = patch_utilities_file(utilities_path)
