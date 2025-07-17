@@ -69,7 +69,6 @@ if [ "$wireguard_other_packages" = false ]; then
     
     systemctl disable wg-quick@.service --quiet 2>/dev/null || true
     
-    ynh_safe_rm "/etc/wireguard"
 fi
 
 #=================================================
