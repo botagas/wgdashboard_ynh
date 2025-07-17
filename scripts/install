@@ -28,19 +28,20 @@ chown -R "$app:www-data" "$install_dir"
 ynh_script_progression "Adding $app's configuration files..."
 
 ynh_script_progression "Setting up Python virtual environment..."
+
+# Check Python version and apply compatibility patches if needed
+python_version=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}')")
+ynh_print_info "Using Python version: $python_version"
+
+# Apply Python 3.9 compatibility patches if needed
+if [[ $(python3 -c "import sys; print(sys.version_info.minor)") -eq 9 ]]; then
+    ynh_print_info "Python 3.9 detected, applying compatibility patches..."
+    python3 "$(dirname "$0")/python39_compat_patcher.py" "$install_dir"
+else
+    ynh_print_info "Python 3.10+ detected, no compatibility patches needed"
+fi
+
 pushd "$install_dir"
-    # Check Python version and apply compatibility patches if needed
-    python_version=$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}')")
-    ynh_print_info "Using Python version: $python_version"
-    
-    # Apply Python 3.9 compatibility patches if needed
-    if [[ $(python3 -c "import sys; print(sys.version_info.minor)") -eq 9 ]]; then
-        ynh_print_info "Python 3.9 detected, applying compatibility patches..."
-        python3 "$PWD/python39_compat_patcher.py" "$install_dir"
-    else
-        ynh_print_info "Python 3.10+ detected, no compatibility patches needed"
-    fi
-    
     python3 -m venv venv
     venv/bin/pip install --upgrade pip
     venv/bin/pip install -r src/requirements.txt
