@@ -29,7 +29,7 @@ ynh_script_progression "Adding $app's configuration files..."
 
 ynh_script_progression "Setting up Python virtual environment..."
 pushd "$install_dir"
-    python3 -m venv venv
+    python3.10 -m venv venv
     venv/bin/pip install --upgrade pip
     venv/bin/pip install -r src/requirements.txt
 popd

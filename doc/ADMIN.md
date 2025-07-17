@@ -2,6 +2,10 @@
 
 This is NOT MEANT to be public facing or exposed in any shape or form to the internet. WGDashboard requires sudo privileges to an extent, and as such, it is highly discouraged to allow the service to be accessible outside the network.
 
+## System Requirements
+
+- Python 3.10 or higher (automatically installed during setup)
+
 ## Configured information
 
 - The app install dir is `__INSTALL_DIR__`
