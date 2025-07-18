@@ -8,7 +8,7 @@ It shall NOT be edited by hand.
   WGDashboard, packaged for YunoHost
 </h1>
 
-A management dashboard for WireGuard servers.
+A management dashboard for WireGuard servers, packaged for YunoHost.
 
 [![Version: 4.2.4~ynh1](https://img.shields.io/badge/Version-4.2.4~ynh1-rgba(0,150,0,1)?style=for-the-badge)](https://ci-apps.yunohost.org/ci/apps/wgdashboard/)
 
