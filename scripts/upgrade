@@ -26,8 +26,6 @@ ynh_script_progression "Upgrading source files..."
 
 ynh_setup_source --dest_dir="$install_dir" --full_replace
 
-chown -R "$app:$app" "$install_dir"
-
 #=================================================
 # SET UP PYTHON ENVIRONMENT
 #=================================================
@@ -49,7 +47,6 @@ mkdir -p "$install_dir/download"
 
 ynh_script_progression "Setting proper permissions..."
 
-chown -R "$app:$app" "$install_dir"
 chmod +x "$install_dir/src/wgd.sh"
 
 ynh_script_progression "Configuring WireGuard directory access for WGDashboard..."
@@ -61,6 +58,8 @@ ynh_script_progression "Ensuring WGDashboard backup directory exists with proper
 
 mkdir -p /etc/wireguard/WGDashboard_Backup
 chown "$app":"$app" /etc/wireguard/WGDashboard_Backup
+
+chown -R "$app:$app" "$install_dir"
 
 #=================================================
 # UPDATE A CONFIG FILE
