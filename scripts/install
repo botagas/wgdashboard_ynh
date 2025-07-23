@@ -85,6 +85,31 @@ yunohost service add "$app" --description="A WireGuard Dashboard" --log="/var/lo
 ynh_config_add_logrotate
 
 #=================================================
+# WRAPPER SCRIPT INSTALLATION
+#=================================================
+ynh_script_progression "Setting up WireGuard command wrappers..."
+
+# Create and install wrapper 
+mkdir -p "$install_dir/bin"
+
+cp "../conf/wg-wrapper.sh" "$install_dir/bin/wg"
+chmod +x "$install_dir/bin/wg"
+
+cp "../conf/wg-quick-wrapper.sh" "$install_dir/bin/wg-quick"
+chmod +x "$install_dir/bin/wg-quick"
+
+chown -R "$app:$app" "$install_dir"
+
+ynh_print_info "WireGuard command wrappers installed"
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Starting $app's systemd service..."
+
+ynh_systemctl --service="$app" --action="start"
+
+#=================================================
 # AUTOMATED INITIAL SETUP
 #=================================================
 ynh_script_progression "Configuring WGDashboard initial setup..."
@@ -134,31 +159,6 @@ if echo "$auth_response" | grep -q '"status":true'; then
 else
     ynh_print_warn "Could not connect to WGDashboard for automatic setup. You may need to complete setup manually via web interface."
 fi
-
-#=================================================
-# WRAPPER SCRIPT INSTALLATION
-#=================================================
-ynh_script_progression "Setting up WireGuard command wrappers..."
-
-# Create and install wrapper 
-mkdir -p "$install_dir/bin"
-
-cp "../conf/wg-wrapper.sh" "$install_dir/bin/wg"
-chmod +x "$install_dir/bin/wg"
-
-cp "../conf/wg-quick-wrapper.sh" "$install_dir/bin/wg-quick"
-chmod +x "$install_dir/bin/wg-quick"
-
-chown -R "$app:$app" "$install_dir"
-
-ynh_print_info "WireGuard command wrappers installed"
-
-#=================================================
-# START SYSTEMD SERVICE
-#=================================================
-ynh_script_progression "Starting $app's systemd service..."
-
-ynh_systemctl --service="$app" --action="start"
 
 #=================================================
 # END OF SCRIPT
