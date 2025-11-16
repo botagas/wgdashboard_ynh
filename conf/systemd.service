@@ -13,7 +13,7 @@ ExecReload=/bin/kill -s HUP $MAINPID
 PIDFile=__INSTALL_DIR__/src/gunicorn.pid
 StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=inherit
-Environment=CONFIGURATION_PATH=__INSTALL_DIR__
+Environment=CONFIGURATION_PATH=__INSTALL_DIR__/src
 Environment=PATH=__INSTALL_DIR__/bin:/usr/local/bin:/usr/bin:/bin
 
 # Sandboxing options to harden security
