@@ -32,8 +32,16 @@ mkdir -p "$install_dir/download"
 
 # Configure WireGuard directory access for WGDashboard
 chmod +x "$install_dir/src/wgd.sh"
-setfacl -m g:"$app":rwx /etc/wireguard
-setfacl -d -m g:"$app":rw /etc/wireguard
+
+# Set ACLs for WireGuard directory - both for directory and existing files
+setfacl -R -m u:"$app":rwx /etc/wireguard
+setfacl -d -m u:"$app":rwx /etc/wireguard
+
+# Specifically ensure any existing .conf files are readable
+if ls /etc/wireguard/*.conf 1> /dev/null 2>&1; then
+    setfacl -m u:"$app":rw /etc/wireguard/*.conf
+    ynh_print_info "Applied ACLs to existing WireGuard configuration files"
+fi
 
 # Create WGDashboard backup directory with proper permissions
 mkdir -p /etc/wireguard/WGDashboard_Backup
@@ -83,6 +91,24 @@ ynh_config_add_systemd
 yunohost service add "$app" --description="A WireGuard Dashboard" --log="/var/log/$app/$app.log"
 
 ynh_config_add_logrotate
+
+#=================================================
+# WRAPPER SCRIPT INSTALLATION
+#=================================================
+ynh_script_progression "Setting up WireGuard command wrappers..."
+
+# Create and install wrapper 
+mkdir -p "$install_dir/bin"
+
+cp "../conf/wg-wrapper.sh" "$install_dir/bin/wg"
+chmod +x "$install_dir/bin/wg"
+
+cp "../conf/wg-quick-wrapper.sh" "$install_dir/bin/wg-quick"
+chmod +x "$install_dir/bin/wg-quick"
+
+chown -R "$app:$app" "$install_dir"
+
+ynh_print_info "WireGuard command wrappers installed"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -141,24 +167,6 @@ if echo "$auth_response" | grep -q '"status":true'; then
 else
     ynh_print_warn "Could not connect to WGDashboard for automatic setup. You may need to complete setup manually via web interface."
 fi
-
-#=================================================
-# WRAPPER SCRIPT INSTALLATION
-#=================================================
-ynh_script_progression "Setting up WireGuard command wrappers..."
-
-# Create and install wrapper 
-mkdir -p "$install_dir/bin"
-
-cp "../conf/wg-wrapper.sh" "$install_dir/bin/wg"
-chmod +x "$install_dir/bin/wg"
-
-cp "../conf/wg-quick-wrapper.sh" "$install_dir/bin/wg-quick"
-chmod +x "$install_dir/bin/wg-quick"
-
-chown -R "$app:$app" "$install_dir"
-
-ynh_print_info "WireGuard command wrappers installed"
 
 #=================================================
 # END OF SCRIPT

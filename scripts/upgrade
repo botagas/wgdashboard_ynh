@@ -51,8 +51,15 @@ chmod +x "$install_dir/src/wgd.sh"
 
 ynh_script_progression "Configuring WireGuard directory access for WGDashboard..."
 
-setfacl -m g:"$app":rwx /etc/wireguard
-setfacl -d -m g:"$app":rw /etc/wireguard
+# Set ACLs for WireGuard directory - both for directory and existing files
+setfacl -R -m u:"$app":rwx /etc/wireguard
+setfacl -d -m u:"$app":rwx /etc/wireguard
+
+# Specifically ensure any existing .conf files are readable
+if ls /etc/wireguard/*.conf 1> /dev/null 2>&1; then
+    setfacl -m u:"$app":rw /etc/wireguard/*.conf
+    ynh_print_info "Applied ACLs to existing WireGuard configuration files"
+fi
 
 ynh_script_progression "Ensuring WGDashboard backup directory exists with proper permissions..."
 
