@@ -24,7 +24,7 @@ PrivateDevices=no
 RestrictNamespaces=no
 RestrictRealtime=no
 DevicePolicy=auto
-ProtectSystem=full
+ProtectSystem=strict
 ProtectControlGroups=yes
 ProtectKernelModules=no
 ProtectKernelTunables=no
@@ -46,7 +46,7 @@ CapabilityBoundingSet=~CAP_MAC_ADMIN CAP_MAC_OVERRIDE
 CapabilityBoundingSet=~CAP_SYS_ADMIN CAP_SYS_PTRACE CAP_SYSLOG
 
 # Exception to ProtectSystem - allow writes to WireGuard config and application directories
-ReadWritePaths=/etc/wireguard __INSTALL_DIR__
+ReadWritePaths=/etc/wireguard /etc/amnezia __INSTALL_DIR__
 
 [Install]
 WantedBy=multi-user.target
