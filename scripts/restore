@@ -48,8 +48,8 @@ ynh_script_progression "Restoring WireGuard permissions..."
 
 # Restore ACL permissions for WireGuard directory access
 if [ -d "/etc/wireguard" ]; then
-    setfacl -m g:"$app":rwx /etc/wireguard
-    setfacl -d -m g:"$app":rw /etc/wireguard
+    setfacl -m u:"$app":rwx /etc/wireguard
+    setfacl -d -m u:"$app":rwx /etc/wireguard
     chown -R "$app":"$app" /etc/wireguard/WGDashboard_Backup
 fi
 

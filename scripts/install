@@ -32,8 +32,9 @@ mkdir -p "$install_dir/download"
 
 # Configure WireGuard directory access for WGDashboard
 chmod +x "$install_dir/src/wgd.sh"
-setfacl -m g:"$app":rwx /etc/wireguard
-setfacl -d -m g:"$app":rw /etc/wireguard
+# Set ACL for the user (not just group) to access WireGuard configs
+setfacl -m u:"$app":rwx /etc/wireguard
+setfacl -d -m u:"$app":rwx /etc/wireguard
 
 # Create WGDashboard backup directory with proper permissions
 mkdir -p /etc/wireguard/WGDashboard_Backup
