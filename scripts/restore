@@ -49,6 +49,11 @@ ynh_script_progression "Restoring WireGuard permissions..."
 # Ensure /etc/wireguard is properly owned by the app
 # Ensure /etc/wireguard has group-based permissions for coexistence
 if [ -d "/etc/wireguard" ]; then
+    # Create wireguard group if it doesn't exist
+    if ! getent group wireguard > /dev/null; then
+        groupadd wireguard
+    fi
+    
     # Add app user to wireguard group for shared access with other WireGuard apps
     if ! groups "$app" | grep -q wireguard; then
         usermod -a -G wireguard "$app"
