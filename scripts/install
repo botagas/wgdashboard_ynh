@@ -32,9 +32,6 @@ mkdir -p "$install_dir/download"
 
 # Configure WireGuard directory access for WGDashboard
 chmod +x "$install_dir/src/wgd.sh"
-# Set ACL for the user (not just group) to access WireGuard configs
-setfacl -m u:"$app":rwx /etc/wireguard
-setfacl -d -m u:"$app":rwx /etc/wireguard
 
 # Create WGDashboard backup directory with proper permissions
 mkdir -p /etc/wireguard/WGDashboard_Backup
@@ -100,6 +97,10 @@ cp "../conf/wg-quick-wrapper.sh" "$install_dir/bin/wg-quick"
 chmod +x "$install_dir/bin/wg-quick"
 
 chown -R "$app:$app" "$install_dir"
+
+# Set ACL for the user (not just group) to access WireGuard configs
+setfacl -m u:"$app":rwx /etc/wireguard
+setfacl -d -m u:"$app":rwx /etc/wireguard
 
 ynh_print_info "WireGuard command wrappers installed"
 
