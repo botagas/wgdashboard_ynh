@@ -51,31 +51,43 @@ chmod +x "$install_dir/src/wgd.sh"
 
 ynh_script_progression "Configuring WireGuard directory access for WGDashboard..."
 
-# Ensure /etc/wireguard exists with group-based permissions for coexistence
+# Ensure /etc/wireguard exists
 if [ ! -d "/etc/wireguard" ]; then
     mkdir -p /etc/wireguard
 fi
 
-# Create wireguard group if it doesn't exist
-if ! getent group wireguard > /dev/null; then
-    groupadd wireguard
+# Check if wireguard is installed to determine permission strategy
+if yunohost app list | grep -q "id: wireguard" 2>/dev/null; then
+    ynh_print_info "Detected wireguard installation, using ACL for shared access..."
+    
+    # Use ACL to grant access without changing ownership
+    setfacl -R -m u:$app:rwx /etc/wireguard
+    setfacl -d -m u:$app:rwx /etc/amnezia 2>/dev/null || true
+    
+    if [ -d "/etc/amnezia" ]; then
+        setfacl -R -m u:$app:rwx /etc/amnezia
+        setfacl -d -m u:$app:rwx /etc/amnezia
+    fi
+else
+    ynh_print_info "No conflicting WireGuard app detected, taking ownership..."
+    
+    # Take full ownership
+    chown -R "$app:$app" /etc/wireguard
+    chmod 750 /etc/wireguard
+    chmod -R o-rwx /etc/wireguard
+    
+    if [ -d "/etc/amnezia" ]; then
+        chown -R "$app:$app" /etc/amnezia
+        chmod 750 /etc/amnezia
+        chmod -R o-rwx /etc/amnezia
+    fi
 fi
-
-# Add app user to wireguard group for shared access with other WireGuard apps
-if ! groups "$app" | grep -q wireguard; then
-    usermod -a -G wireguard "$app"
-fi
-
-# Use group permissions instead of taking ownership
-chgrp -R wireguard /etc/wireguard
-chmod 770 /etc/wireguard
-chmod -R g+rwX,o-rwx /etc/wireguard
 
 ynh_script_progression "Ensuring WGDashboard backup directory exists with proper permissions..."
 
 mkdir -p /etc/wireguard/WGDashboard_Backup
-chgrp wireguard /etc/wireguard/WGDashboard_Backup
-chmod 770 /etc/wireguard/WGDashboard_Backup
+chown "$app:$app" /etc/wireguard/WGDashboard_Backup
+chmod 750 /etc/wireguard/WGDashboard_Backup
 
 chown -R "$app:$app" "$install_dir"
 
