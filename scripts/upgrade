@@ -51,13 +51,26 @@ chmod +x "$install_dir/src/wgd.sh"
 
 ynh_script_progression "Configuring WireGuard directory access for WGDashboard..."
 
-setfacl -m g:"$app":rwx /etc/wireguard
-setfacl -d -m g:"$app":rw /etc/wireguard
+# Ensure /etc/wireguard exists with group-based permissions for coexistence
+if [ ! -d "/etc/wireguard" ]; then
+    mkdir -p /etc/wireguard
+fi
+
+# Add app user to wireguard group for shared access with other WireGuard apps
+if ! groups "$app" | grep -q wireguard; then
+    usermod -a -G wireguard "$app"
+fi
+
+# Use group permissions instead of taking ownership
+chgrp -R wireguard /etc/wireguard
+chmod 770 /etc/wireguard
+chmod -R g+rwX,o-rwx /etc/wireguard
 
 ynh_script_progression "Ensuring WGDashboard backup directory exists with proper permissions..."
 
 mkdir -p /etc/wireguard/WGDashboard_Backup
-chown "$app":"$app" /etc/wireguard/WGDashboard_Backup
+chgrp wireguard /etc/wireguard/WGDashboard_Backup
+chmod 770 /etc/wireguard/WGDashboard_Backup
 
 chown -R "$app:$app" "$install_dir"
 

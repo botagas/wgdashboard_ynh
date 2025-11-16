@@ -46,11 +46,18 @@ sysctl -p "/etc/sysctl.d/$app.conf"
 #=================================================
 ynh_script_progression "Restoring WireGuard permissions..."
 
-# Restore ACL permissions for WireGuard directory access
+# Ensure /etc/wireguard is properly owned by the app
+# Ensure /etc/wireguard has group-based permissions for coexistence
 if [ -d "/etc/wireguard" ]; then
-    setfacl -m g:"$app":rwx /etc/wireguard
-    setfacl -d -m g:"$app":rw /etc/wireguard
-    chown -R "$app":"$app" /etc/wireguard/WGDashboard_Backup
+    # Add app user to wireguard group for shared access with other WireGuard apps
+    if ! groups "$app" | grep -q wireguard; then
+        usermod -a -G wireguard "$app"
+    fi
+    
+    # Use group permissions instead of taking ownership
+    chgrp -R wireguard /etc/wireguard
+    chmod 770 /etc/wireguard
+    chmod -R g+rwX,o-rwx /etc/wireguard
 fi
 
 #=================================================
